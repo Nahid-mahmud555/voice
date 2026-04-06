@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insight Listener | Final Build</title>
+    <title>Insight Listener | Fixed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -19,41 +19,38 @@
     <main class="w-full max-w-md space-y-8 text-center">
         <div>
             <h1 class="text-3xl font-black italic tracking-tighter text-white uppercase">INSIGHT <span class="text-indigo-500">LISTENER</span></h1>
-            <p id="system-status" class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">Stable Analysis Mode</p>
+            <p id="system-status" class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">Production Build v2.0</p>
         </div>
 
-        <!-- Step 1: Record -->
-        <div id="step-1" class="glass-card p-10 shadow-2xl transition-all">
+        <div id="step-1" class="glass-card p-10 shadow-2xl">
             <div id="timer" class="text-6xl font-black mb-8 text-white tracking-tighter">00:00</div>
             <button id="micBtn" class="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all">
                 <i data-lucide="mic" id="micIcon" class="w-10 h-10 text-white"></i>
             </button>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">Tap to Start Recording</p>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-4">Tap to Record</p>
         </div>
 
-        <!-- Step 2: Preview & Send -->
-        <div id="step-2" class="hidden space-y-4 animate-in slide-in-from-bottom-10">
+        <div id="step-2" class="hidden space-y-4">
             <div class="glass-card p-6 text-left border border-white/10">
-                <p class="text-[9px] font-black text-indigo-400 uppercase mb-3 tracking-widest text-center">Transcript Preview</p>
-                <div id="transcript-box" class="text-sm text-slate-300 font-medium leading-relaxed max-h-40 overflow-y-auto px-2 italic text-center"></div>
+                <p class="text-[9px] font-black text-indigo-400 uppercase mb-3 tracking-widest text-center">Transcript</p>
+                <div id="transcript-box" class="text-sm text-slate-300 font-medium leading-relaxed max-h-40 overflow-y-auto px-2 text-center italic"></div>
             </div>
             <button id="sendBtn" class="w-full bg-indigo-500 text-white py-5 rounded-2xl font-black text-xs tracking-[0.2em] uppercase shadow-xl hover:bg-indigo-400">
                 SEND TO AI
             </button>
-            <button onclick="location.reload()" class="text-slate-500 text-[9px] font-bold uppercase tracking-widest w-full">Reset</button>
+            <button onclick="location.reload()" class="text-slate-500 text-[9px] font-bold uppercase tracking-widest w-full">Discard</button>
         </div>
 
-        <!-- Step 3: Result -->
-        <div id="step-3" class="hidden glass-card p-8 text-left border-t-4 border-indigo-500 animate-in zoom-in-95">
+        <div id="step-3" class="hidden glass-card p-8 text-left border-t-4 border-indigo-500">
             <div id="ai-content" class="text-sm text-slate-300 leading-relaxed space-y-4 font-medium"></div>
-            <button onclick="location.reload()" class="mt-8 w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-bold uppercase tracking-widest">New Analysis</button>
+            <button onclick="location.reload()" class="mt-8 w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-bold uppercase tracking-widest">New Session</button>
         </div>
     </main>
 
     <script>
         lucide.createIcons();
         
-        // মামা, এখানে তোর নতুন API Key টা দিবি
+        // মামা, তোর API Key টা এখানে বসা
         const API_KEY = "AIzaSyDOJ55Y5jiApxP2ICMhBejNVSHM4hcCZmQ"; 
 
         let recognition, isRecording = false, timerInterval, startTime, finalTranscript = "";
@@ -64,7 +61,6 @@
             recognition.continuous = true;
             recognition.interimResults = false;
             recognition.lang = 'bn-BD';
-
             recognition.onresult = (e) => {
                 for (let i = e.resultIndex; i < e.results.length; i++) {
                     if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + " ";
@@ -85,12 +81,10 @@
                     let s = Math.floor((Date.now() - startTime) / 1000);
                     document.getElementById('timer').innerText = `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
                 }, 1000);
-                document.getElementById('system-status').innerText = "LISTENING...";
             } else {
                 recognition.stop();
                 isRecording = false;
                 clearInterval(timerInterval);
-                document.getElementById('system-status').innerText = "PROCESSING...";
                 setTimeout(() => {
                     document.getElementById('step-1').classList.add('hidden');
                     document.getElementById('step-2').classList.remove('hidden');
@@ -103,15 +97,15 @@
             const btn = document.getElementById('sendBtn');
             btn.innerText = "THINKING..."; btn.disabled = true;
 
-            // মামা, এখানে gemini-pro ইউজ করছি যাতে 'Not Found' এরর না আসে
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+            // পরিবর্তন: v1beta থেকে v1 এ শিফট করা হয়েছে এবং gemini-1.5-flash মডেল ব্যবহার করা হয়েছে
+            const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
             
             try {
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Analyze this business conversation and give me the core Pain Point and a Startup Idea with Revenue model in English: " + finalTranscript }] }]
+                        contents: [{ parts: [{ text: "Analyze this: " + finalTranscript + ". Provide Pain Point and Startup Idea in English with bold headers." }] }]
                     })
                 });
 
@@ -125,12 +119,10 @@
                 document.getElementById('step-2').classList.add('hidden');
                 document.getElementById('step-3').classList.remove('hidden');
                 document.getElementById('ai-content').innerHTML = output;
-                document.getElementById('system-status').innerText = "SUCCESS";
 
             } catch (err) {
-                alert("মামা এরর: " + err.message);
-                btn.innerText = "RETRY";
-                btn.disabled = false;
+                alert("এরর: " + err.message);
+                btn.innerText = "TRY AGAIN"; btn.disabled = false;
             }
         });
     </script>
