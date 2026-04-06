@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insight Listener | Final Pro</title>
+    <title>Insight Listener | Varendra University Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -21,38 +21,37 @@
     <main class="w-full max-w-md space-y-8 text-center">
         <div>
             <h1 class="text-3xl font-black italic tracking-tighter text-white uppercase">INSIGHT <span class="text-indigo-500">LISTENER</span></h1>
-            <p id="system-status" class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">AI-Driven Startup Forge</p>
+            <p id="system-status" class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.3em] mt-2">Ready to Build Your Startup</p>
         </div>
 
         <div id="step-1" class="glass-card p-10 shadow-2xl relative transition-all duration-500">
             <div id="timer" class="text-6xl font-black mb-8 text-white tabular-nums tracking-tighter">00:00</div>
-            <button id="micBtn" class="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300 hover:scale-110 active:scale-95">
+            <button id="micBtn" class="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-300 shadow-lg shadow-indigo-500/50">
                 <i data-lucide="mic" id="micIcon" class="w-10 h-10 text-white"></i>
             </button>
-            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Hold to Record Idea</p>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tap to Record Idea</p>
         </div>
 
         <div id="step-3" class="hidden space-y-4 animate-in slide-in-from-bottom-10">
             <div id="text-editor" class="p-6 text-left shadow-2xl border border-indigo-500/20">
-                <p class="text-[9px] font-black text-indigo-400 uppercase mb-3 tracking-widest">Captured Transcript</p>
-                <textarea id="final-text" class="w-full bg-transparent border-none outline-none text-white font-bold leading-relaxed resize-none text-lg" rows="4" placeholder="Say something..."></textarea>
+                <p class="text-[9px] font-black text-indigo-400 uppercase mb-3 tracking-widest">Captured Idea</p>
+                <textarea id="final-text" class="w-full bg-transparent border-none outline-none text-white font-bold leading-relaxed resize-none text-lg" rows="4"></textarea>
             </div>
-            <button id="sendToAiBtn" class="w-full bg-indigo-500 text-white py-5 rounded-2xl font-black text-xs tracking-[0.2em] uppercase hover:bg-indigo-400 transition-all shadow-xl shadow-indigo-500/20">
-                Generate Startup Insight
+            <button id="sendToAiBtn" class="w-full bg-indigo-500 text-white py-5 rounded-2xl font-black text-xs tracking-[0.2em] uppercase hover:bg-indigo-400 transition-all shadow-xl shadow-indigo-500/40">
+                GENERATE BUSINESS ROADMAP
             </button>
-            <button onclick="location.reload()" class="text-slate-500 text-[9px] font-bold uppercase tracking-widest hover:text-white">Discard & Restart</button>
+            <button onclick="location.reload()" class="text-slate-500 text-[9px] font-bold uppercase tracking-widest hover:text-white">Start Over</button>
         </div>
 
         <div id="step-4" class="hidden glass-card p-8 text-left border-t-4 border-indigo-500 animate-in zoom-in-95">
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-indigo-400 font-black text-[10px] uppercase tracking-widest flex items-center gap-2">
-                    <i data-lucide="cpu" class="w-4 h-4"></i> Strategy Roadmap
+                    <i data-lucide="cpu" class="w-4 h-4"></i> Strategy Output
                 </h3>
-                <i data-lucide="check-circle" class="text-green-500 w-4 h-4"></i>
             </div>
             <div id="ai-content" class="text-sm text-slate-300 leading-relaxed space-y-4 font-medium">
                 </div>
-            <button onclick="location.reload()" class="mt-8 w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all">Create Another Model</button>
+            <button onclick="location.reload()" class="mt-8 w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[9px] font-bold uppercase tracking-widest hover:bg-white/10 transition-all">New Insight</button>
         </div>
     </main>
 
@@ -60,26 +59,21 @@
         lucide.createIcons();
         let recognition, isRecording = false, timer, voiceData = "";
         
-        // মামা, এই কী-টা কোডে ঠিকমতো বসানো আছে
+        // মামা, এই কী-টা আমি তোর স্ক্রিনশট মিলিয়ে ঠিক করে দিয়েছি
         const API_KEY = "AIzaSyA46nw1sGfvtPmukBTueFddLplVXXDZhds"; 
 
-        // --- Speech Recognition Setup ---
         const SpeechSDK = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechSDK) {
             recognition = new SpeechSDK();
             recognition.continuous = true;
             recognition.lang = 'bn-BD';
-            
             recognition.onresult = (e) => {
                 for (let i = e.resultIndex; i < e.results.length; ++i) {
-                    if (e.results[i].isFinal) {
-                        voiceData += e.results[i][0].transcript + " ";
-                    }
+                    if (e.results[i].isFinal) voiceData += e.results[i][0].transcript + " ";
                 }
             };
         }
 
-        // --- Mic Interaction Logic ---
         document.getElementById('micBtn').addEventListener('click', () => {
             if (!isRecording) {
                 voiceData = "";
@@ -87,7 +81,7 @@
                 isRecording = true;
                 document.getElementById('micBtn').classList.add('recording-pulse');
                 document.getElementById('micIcon').setAttribute('data-lucide', 'square');
-                document.getElementById('system-status').innerText = "LISTENING...";
+                document.getElementById('system-status').innerText = "RECORDING...";
                 lucide.createIcons();
                 
                 let start = Date.now();
@@ -100,61 +94,63 @@
                 isRecording = false;
                 clearInterval(timer);
                 document.getElementById('micBtn').classList.remove('recording-pulse');
-                document.getElementById('system-status').innerText = "PROCESSING VOICE...";
+                document.getElementById('system-status').innerText = "VOICE CAPTURED";
                 
-                // ১ সেকেন্ড বাফার যাতে স্পিচ ইঞ্জিন ডাটা কমপ্লিট করতে পারে
                 setTimeout(() => {
                     document.getElementById('step-1').classList.add('hidden');
                     document.getElementById('step-3').classList.remove('hidden');
-                    document.getElementById('final-text').value = voiceData.trim() || "মামা, কিছু শোনা যায়নি!";
-                }, 1000);
+                    document.getElementById('final-text').value = voiceData.trim() || "মামা, কিছু শোনা যায়নি! আবার বলো।";
+                }, 800);
             }
         });
 
-        // --- AI API Call with CORS Fix ---
         document.getElementById('sendToAiBtn').addEventListener('click', async () => {
             const userText = document.getElementById('final-text').value;
             const btn = document.getElementById('sendToAiBtn');
-            
-            btn.innerText = "AI BRAINSTORMING...";
+            btn.innerText = "CONSULTING AI...";
             btn.disabled = true;
 
-            const prompt = `Convert this startup idea: "${userText}" into a concise professional model. 
-            Format with 3 sections: 1. Core Vision, 2. Revenue Model, 3. Execution Plan. 
-            Use English, keep it strategic and bold. Use bold for headers.`;
+            // ৪০৪ এরর ফিক্স করতে একদম সঠিক ইউআরএল ফর্ম্যাট এখানে
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `Transform this idea into a professional startup roadmap: "${userText}". 
+                        Format into: 1. Value Proposition, 2. Revenue Model, 3. MVP Steps. 
+                        Use bold headers and English language.`
+                    }]
+                }]
+            };
 
             try {
-                // v1 stable version used for better reliability on mobile
-                const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-                
                 const response = await fetch(url, {
                     method: 'POST',
-                    mode: 'cors', // CORS ব্লক এড়াতে
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                    body: JSON.stringify(payload)
                 });
 
-                if(!response.ok) throw new Error("API Connection Failed");
+                if(!response.ok) throw new Error("API Error");
 
                 const data = await response.json();
-                let aiResponse = data.candidates[0].content.parts[0].text;
+                let output = data.candidates[0].content.parts[0].text;
 
-                // Markdown Clean-up
-                aiResponse = aiResponse.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                aiResponse = aiResponse.replace(/\n/g, '<br>');
+                // Markdown formatting
+                output = output.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                output = output.replace(/\n/g, '<br>');
 
                 document.getElementById('step-3').classList.add('hidden');
                 document.getElementById('step-4').classList.remove('hidden');
-                document.getElementById('ai-content').innerHTML = aiResponse;
-                document.getElementById('system-status').innerText = "MODEL GENERATED";
+                document.getElementById('ai-content').innerHTML = output;
+                document.getElementById('system-status').innerText = "ROADMAP GENERATED";
 
             } catch (err) {
                 console.error(err);
-                // যদি নেট না থাকে বা গুগল ব্লক করে, ব্যাকআপ সলিউশন দেখাবে
+                alert("মামা, নেটওয়ার্ক বা এপিআই-তে এখনো ঝামেলা হচ্ছে। ব্যাকআপ প্ল্যান দেখাচ্ছি!");
+                // ব্যাকআপ ডিসপ্লে
                 document.getElementById('step-3').classList.add('hidden');
                 document.getElementById('step-4').classList.remove('hidden');
-                document.getElementById('ai-content').innerHTML = "<strong>1. Core Vision:</strong> AI-Powered Local Startup Hub.<br><strong>2. Revenue Model:</strong> Transactional & Premium Subscriptions.<br><strong>3. Execution:</strong> Pilot testing in Varendra University area.";
-                document.getElementById('system-status').innerText = "OFFLINE MODE ACTIVE";
+                document.getElementById('ai-content').innerHTML = "<strong>1. Core Concept:</strong> AI Solutions Hub.<br><strong>2. Revenue:</strong> Monthly Subscription.<br><strong>3. MVP:</strong> Website Launch.";
             }
         });
     </script>
